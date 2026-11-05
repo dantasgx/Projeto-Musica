@@ -15,7 +15,7 @@ const char* musicas[5] = {
   "Imperial March",
   "Super Mario Bros",
   "Tetris",
-  "Zelda"
+  "Merry Christmas"
 };
 
 int musicaSelecionada = 0;
@@ -171,8 +171,67 @@ void setup()
 
 }
 
+void mostrarMusica()
+{
+  lcd.setCursor(0, 1);
+  lcd.print("                ");
+  lcd.setCursor(0, 1);
+  lcd.print(musicas[musicaSelecionada]);
+}
+
+bool trocouMusica()
+{
+  if (digitalRead(botaoUp) == LOW) {
+    musicaSelecionada = musicaSelecionada - 1;
+    if (musicaSelecionada < 0) {
+      musicaSelecionada = 4;
+    }
+    mostrarMusica();
+    while (digitalRead(botaoUp) == LOW) { }
+    delay(50);
+    return true;
+  }
+
+  if (digitalRead(botaoDown) == LOW) {
+    musicaSelecionada = musicaSelecionada + 1;
+    if (musicaSelecionada > 4) {
+      musicaSelecionada = 0;
+    }
+    mostrarMusica();
+    while (digitalRead(botaoDown) == LOW) { }
+    delay(50);
+    return true;
+  }
+
+  return false;
+}
+
+
+bool verificarPause()
+{
+  if (digitalRead(botaoPlay) == LOW) {
+    noTone(buzzer);
+
+    while (digitalRead(botaoPlay) == LOW) { }   // espera soltar
+    delay(50);
+
+    while (digitalRead(botaoPlay) == HIGH) {    // fica pausado
+      if (trocouMusica()) {
+        return true;                            // trocou de música na pausa
+      }
+    }
+
+    while (digitalRead(botaoPlay) == LOW) { }   // espera soltar
+    delay(50);
+  }
+  return false;
+}
+
 void tocarHarry()
 {
+  while (digitalRead(botaoPlay) == LOW) { }   // espera soltar o Play que iniciou
+  delay(50);
+
   for (int i = 0; i < harryNotes * 2; i = i + 2) {
 
     int divider = harryMelody[i + 1];
@@ -186,7 +245,15 @@ void tocarHarry()
     }
 
     tone(buzzer, harryMelody[i], noteDuration * 0.9);
-    delay(noteDuration);
+
+    unsigned long inicio = millis();
+    while (millis() - inicio < noteDuration) {
+      if (trocouMusica() || verificarPause()) {
+        noTone(buzzer);
+        return;                              
+      }
+    }
+
     noTone(buzzer);
   }
 }
@@ -217,8 +284,10 @@ void loop()
     delay(250);
   }
   
-    if (digitalRead(botaoPlay) == LOW) {
-    tocarHarry();
+   if (digitalRead(botaoPlay) == LOW) {
+    if (musicaSelecionada == 0) {
+      tocarHarry();
+    }
   }
   
 }
