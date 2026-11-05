@@ -221,44 +221,4 @@ void loop()
     tocarHarry();
   }
   
-
-   /*int estado = digitalRead(botao);
-  digitalWrite(led,HIGH);
-  lcd.setCursor(0,1);
-   
-  if(estado == HIGH){
-    lcd.print("tocando");
-    
-  	tone(buzzer,262);
-    delay(500);
-    noTone(buzzer);
-    
-    tone(buzzer,294);
-    delay(500);
-    noTone(buzzer);
-    
-    tone(buzzer,330);
-    delay(500);
-    noTone(buzzer);
-    
-    tone(buzzer,349);
-    delay(500);
-    noTone(buzzer);
-    
-    tone(buzzer,392);
-    delay(500);
-    noTone(buzzer);
-    
-    tone(buzzer,440);
-    delay(500);
-    noTone(buzzer);
-    
-    tone(buzzer,494);
-    delay(500);
-    noTone(buzzer);
-  }
-  else{
-    lcd.print("       ");
-  	noTone(buzzer);
-  }*/
 }
