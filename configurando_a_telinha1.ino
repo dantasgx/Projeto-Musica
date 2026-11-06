@@ -1,5 +1,6 @@
 // C++ code
 //
+
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(12,11,5,4,3,2);
@@ -171,6 +172,17 @@ void setup()
 
 }
 
+void inicio()
+{
+	noTone(buzzer);
+  	lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Escolha musica:");
+    lcd.setCursor(0,1);
+    musicaSelecionada = 0;
+    lcd.print(musicas[musicaSelecionada]);
+}
+
 void mostrarMusica()
 {
   lcd.setCursor(0, 1);
@@ -181,7 +193,7 @@ void mostrarMusica()
 
 bool trocouMusica()
 {
-  if (digitalRead(botaoUp) == LOW) {
+  if (digitalRead(botaoUp) == LOW) { 
     musicaSelecionada = musicaSelecionada - 1;
     if (musicaSelecionada < 0) {
       musicaSelecionada = 4;
@@ -206,6 +218,14 @@ bool trocouMusica()
   return false;
 }
 
+bool verificarStop()
+{
+  if(digitalRead(botaoStop) == LOW){
+  	inicio();
+    return true;
+  }
+  return false;
+}
 
 bool verificarPause()
 {
@@ -216,6 +236,11 @@ bool verificarPause()
     delay(50);
 
     while (digitalRead(botaoPlay) == HIGH) {    // fica pausado
+      lcd.setCursor(0,0);
+      lcd.print("musica pausada");
+      if(verificarStop()){
+      	return true;
+      }
       if (trocouMusica()) {
         return true;                            // trocou de música na pausa
       }
@@ -248,7 +273,7 @@ void tocarHarry()
 
     unsigned long inicio = millis();
     while (millis() - inicio < noteDuration) {
-      if (trocouMusica() || verificarPause()) {
+      if (verificarPause() || verificarStop()) {
         noTone(buzzer);
         return;                              
       }
@@ -285,9 +310,29 @@ void loop()
   }
   
    if (digitalRead(botaoPlay) == LOW) {
+    lcd.setCursor(0,0);
+    lcd.print("                 ");
+    lcd.setCursor(0,0);
+    lcd.print("reproduzindo");
     if (musicaSelecionada == 0) {
       tocarHarry();
     }
+    if (musicaSelecionada == 1) {
+      //musica 2
+    }
+    if (musicaSelecionada == 2) {
+      //musica 3
+    }
+    if (musicaSelecionada == 3) {
+      //musica 4
+    }
+    if (musicaSelecionada == 4) {
+      //musica 5
+    }
+  }
+  
+  if(digitalRead(botaoStop) == LOW) {
+    inicio();
   }
   
 }
